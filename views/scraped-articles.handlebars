@@ -1,8 +1,10 @@
 <style>
     body {
-        background-color: #F2F6D0
+        background-color: #4285f4;
     }
-
+    p{
+        background-color: white;
+    }
     #wrapper {
         width: 960px;
         margin-left: auto;
@@ -43,12 +45,17 @@
 
 <body>
     <div id="wrapper">
-        <h1>Note Scraper</h1>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">Google News Scrapper</h1>
+                <p class="lead">This applications allows you to scrape information from the latest news articles.
+                </p>
+            </div>
+        </div>
         <div id="articles"></div>
         <div id="notes"></div>
+
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="app.js"></script>
 </body>
 
 </html>

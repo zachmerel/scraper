@@ -28,34 +28,40 @@ app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
 
+app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 // Routes
-
-// A GET route for scraping the echoJS website
+app.get("/",function(req, res){
+  res.render("scraped-articles")
+})
+// A GET route for scraping google news
 app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with axios
   axios.get("https://news.google.com/?hl=en-US&gl=US&ceid=US%3Aen").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
-    var $ = cheerio.load(response.data);
+    let $ = cheerio.load(response.data);
 
-    // Now, we grab every h2 within an article tag, and do the following:
-    $("article h2").each(function(i, element) {
+    // Now, we grab every h3 within an article tag, and do the following:
+    $("article div").each(function(i, element) {
       // Save an empty result object
-      var result = {};
+      let result = {};
 
-      // Add the text and href of every link, and save them as properties of the result object
+      // Add the article title and href of every link, and save them as properties of the result object
       result.title = $(this)
-        .children("a")
         .text();
       result.link = $(this)
-        .children("a")
-        .attr("href");
-
+        .children("div")
+        .children("p")
+        .text();
+      // console.log('result.title', result.title)
+      // console.log('result.link', result.link)
       // Create a new Article using the `result` object built from scraping
+      console.log('result', result)
       db.Article.create(result)
         .then(function(dbArticle) {
           // View the added result in the console
